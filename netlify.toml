@@ -1,0 +1,17 @@
+[build]
+  command = "echo 'Frontend static site ready for deployment'"
+  publish = "static"
+
+[build.environment]
+  REACT_APP_API_URL = ""
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production]
+  command = "echo 'Production deployment'"
+
+[context.deploy-preview]
+  command = "echo 'Deploy preview'"

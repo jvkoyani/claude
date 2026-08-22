@@ -1,10 +1,17 @@
 // VolHedge Pro - Frontend JavaScript Application
 
+// Configuration - reads from window.__VOLHEDGE_CONFIG__ or uses defaults
+const VOLHEDGE_CONFIG = window.__VOLHEDGE_CONFIG__ || {
+    API_BASE_URL: localStorage.getItem('volhedge_api_url') || 'http://localhost:8000',
+    WS_PROTOCOL: window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+};
+
 class VolHedgeApp {
     constructor() {
         this.socket = null;
         this.currentSymbol = 'NIFTY';
         this.portfolio = {};
+        this.apiBaseUrl = VOLHEDGE_CONFIG.API_BASE_URL;
         this.initializeEventListeners();
         this.loadTabs();
         this.connectWebSocket();
@@ -17,6 +24,7 @@ class VolHedgeApp {
         document.getElementById('addScrip').addEventListener('click', () => this.addScripTab());
         document.getElementById('rebalanceBtn').addEventListener('click', () => this.executeRebalance());
         document.getElementById('authBtn').addEventListener('click', () => this.openAuthDialog());
+        document.getElementById('settingsBtn').addEventListener('click', () => this.openConfigModal());
 
         // Modal controls
         document.querySelector('.modal-close').addEventListener('click', (e) => {
@@ -45,8 +53,9 @@ class VolHedgeApp {
     }
 
     connectWebSocket() {
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const ws_url = `${protocol}//${window.location.host}/ws`;
+        const apiUrl = new URL(this.apiBaseUrl);
+        const protocol = apiUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws_url = `${protocol}//${apiUrl.host}/ws`;
 
         this.socket = new WebSocket(ws_url);
 
@@ -74,7 +83,7 @@ class VolHedgeApp {
 
     async loadTabs() {
         try {
-            const response = await fetch('/api/tabs');
+            const response = await fetch(`${this.apiBaseUrl}/api/tabs`);
             const data = await response.json();
             const tabs = data.tabs || ['NIFTY', 'BANKNIFTY', 'FINNIFTY'];
 
@@ -113,7 +122,7 @@ class VolHedgeApp {
 
     async loadPortfolioData() {
         try {
-            const response = await fetch('/api/portfolio');
+            const response = await fetch(`${this.apiBaseUrl}/api/portfolio`);
             const data = await response.json();
             this.portfolio = data;
 
@@ -201,7 +210,7 @@ class VolHedgeApp {
         }
 
         try {
-            const response = await fetch('/api/positions/add', {
+            const response = await fetch(`${this.apiBaseUrl}/api/positions/add`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -239,7 +248,7 @@ class VolHedgeApp {
         if (!confirm('Delete this position?')) return;
 
         try {
-            const response = await fetch(`/api/positions/${this.currentSymbol}/${posId}`, {
+            const response = await fetch(`${this.apiBaseUrl}/api/positions/${this.currentSymbol}/${posId}`, {
                 method: 'DELETE'
             });
 
@@ -264,7 +273,7 @@ class VolHedgeApp {
         table.classList.add('hidden');
 
         try {
-            const response = await fetch(`/api/option_chain/${this.currentSymbol}?strike_count=${strikeCount}`);
+            const response = await fetch(`${this.apiBaseUrl}/api/option_chain/${this.currentSymbol}?strike_count=${strikeCount}`);
             const chain = await response.json();
 
             if (!chain.strikes) {
@@ -309,7 +318,7 @@ class VolHedgeApp {
         if (!symbol) return;
 
         try {
-            const response = await fetch('/api/symbols/add_tab', {
+            const response = await fetch(`${this.apiBaseUrl}/api/symbols/add_tab`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ symbol })
@@ -328,7 +337,7 @@ class VolHedgeApp {
         if (!confirm(`Remove ${symbol} tab?`)) return;
 
         try {
-            const response = await fetch(`/api/symbols/remove_tab/${symbol}`, {
+            const response = await fetch(`${this.apiBaseUrl}/api/symbols/remove_tab/${symbol}`, {
                 method: 'DELETE'
             });
 
@@ -346,7 +355,7 @@ class VolHedgeApp {
 
     async executeRebalance() {
         try {
-            const response = await fetch(`/api/rebalance/${this.currentSymbol}`);
+            const response = await fetch(`${this.apiBaseUrl}/api/rebalance/${this.currentSymbol}`);
             const rec = await response.json();
 
             alert(`Rebalance Recommendation:\n${rec.recommendation}\n\n(In live mode, this would execute via Fyers API)`);
@@ -392,6 +401,40 @@ class VolHedgeApp {
         if (!secretKey) return;
 
         alert('To complete OAuth:\n1. Click OK\n2. Browser will open Fyers login\n3. Authorize the application\n4. Copy the redirect URL\n5. Paste it in the terminal prompt');
+    }
+
+    openConfigModal() {
+        const modal = document.getElementById('configModal');
+        const input = document.getElementById('apiUrlInput');
+        input.value = localStorage.getItem('volhedge_api_url') || '';
+
+        modal.classList.remove('hidden');
+
+        document.getElementById('saveConfigBtn').onclick = () => this.saveConfig();
+        document.getElementById('closeConfigModal').onclick = () => {
+            modal.classList.add('hidden');
+        };
+        modal.querySelector('.modal-close').onclick = () => {
+            modal.classList.add('hidden');
+        };
+    }
+
+    saveConfig() {
+        const input = document.getElementById('apiUrlInput');
+        const url = input.value.trim();
+
+        if (url) {
+            localStorage.setItem('volhedge_api_url', url);
+            this.apiBaseUrl = url;
+            alert('✓ Backend URL saved! Page will reload...');
+        } else {
+            localStorage.removeItem('volhedge_api_url');
+            this.apiBaseUrl = 'http://localhost:8000';
+            alert('✓ Reset to localhost');
+        }
+
+        document.getElementById('configModal').classList.add('hidden');
+        location.reload();
     }
 }
 

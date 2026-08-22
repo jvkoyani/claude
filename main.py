@@ -1,6 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 import json
 import asyncio
 from datetime import datetime
@@ -14,6 +15,15 @@ from volhedge_engine.rebalancer import RebalancerEngine
 
 
 app = FastAPI(title="VolHedge Pro")
+
+# Enable CORS for frontend running on Netlify
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # In production, specify your Netlify domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 auth = FyersAuth()
 portfolio_manager = PortfolioManager()
