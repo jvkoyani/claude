@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VolHedge Pro - Trading Terminal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="logo">⚡ VolHedge Pro</h1>
+            </div>
+            <div class="header-right">
+                <button id="authBtn" class="btn btn-primary">⚙ Fyers API Setup</button>
+                <button id="settingsBtn" class="btn btn-secondary">⚙ Settings</button>
+            </div>
+        </header>
+
+        <!-- Top Metrics Bar -->
+        <div class="metrics-bar">
+            <div class="metric">
+                <span class="label">Gross MTM</span>
+                <span class="value" id="mtm">₹0</span>
+            </div>
+            <div class="metric">
+                <span class="label">Net Delta</span>
+                <span class="value" id="netDelta">0</span>
+            </div>
+            <div class="metric">
+                <span class="label">Net Gamma</span>
+                <span class="value" id="netGamma">0</span>
+            </div>
+            <div class="metric">
+                <span class="label">Net Vega</span>
+                <span class="value" id="netVega">0</span>
+            </div>
+            <div class="metric">
+                <span class="label">Net Theta</span>
+                <span class="value" id="netTheta">0</span>
+            </div>
+            <div class="metric">
+                <span class="label">SPAN+Exp Margin</span>
+                <span class="value" id="marginReq">₹0</span>
+            </div>
+        </div>
+
+        <!-- Delta Neutral Alert Banner -->
+        <div id="deltaAlertBanner" class="delta-alert hidden">
+            <span id="deltaRecommendation">Portfolio is delta-neutral</span>
+            <button id="rebalanceBtn" class="btn btn-danger">⚡ 1-Click Rebalance Order</button>
+        </div>
+
+        <!-- Scrip Tabs & Search -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <div id="tabsList" class="tabs-list">
+                    <!-- Tabs will be populated dynamically -->
+                </div>
+                <div class="search-box">
+                    <input type="text" id="symbolSearch" placeholder="Search/Add scrip..." />
+                    <button id="addScrip" class="btn btn-small">+ Add Scrip</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-area">
+            <div class="toolbar">
+                <div class="left-tools">
+                    <span id="synFutBadge" class="badge">Syn Fut: --</span>
+                </div>
+                <div class="right-tools">
+                    <button id="addPositionBtn" class="btn btn-success">+ Add Position</button>
+                    <button id="optionChainBtn" class="btn btn-info">📊 Live Option Chain</button>
+                </div>
+            </div>
+
+            <!-- Positions Table -->
+            <div class="table-container">
+                <table id="positionsTable" class="positions-table">
+                    <thead>
+                        <tr>
+                            <th>Strike</th>
+                            <th>Type</th>
+                            <th>Qty</th>
+                            <th>Entry Price</th>
+                            <th>Current</th>
+                            <th>MTM</th>
+                            <th>IV%</th>
+                            <th>Delta</th>
+                            <th>Gamma</th>
+                            <th>Vega</th>
+                            <th>Theta</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="positionsBody">
+                        <!-- Positions will be populated here -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state">
+                    No positions. Click "+ Add Position" or use "📊 Live Option Chain" to start trading.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Position Modal -->
+    <div id="addPositionModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Position</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Instrument Type</label>
+                    <select id="instType">
+                        <option value="CE">Call (CE)</option>
+                        <option value="PE">Put (PE)</option>
+                        <option value="FUT">Future</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Strike</label>
+                    <input type="number" id="strikeInput" placeholder="Strike price" />
+                </div>
+                <div class="form-group">
+                    <label>Expiry</label>
+                    <input type="text" id="expiryInput" placeholder="DD-MM-YYYY" />
+                </div>
+                <div class="form-group">
+                    <label>Quantity (+ Buy, - Sell)</label>
+                    <input type="number" id="qtyInput" placeholder="e.g., 50 or -50" />
+                </div>
+                <div class="form-group">
+                    <label>Entry Price (₹)</label>
+                    <input type="number" id="priceInput" placeholder="Entry price" step="0.01" />
+                </div>
+                <div class="form-group">
+                    <label>Tag (optional)</label>
+                    <input type="text" id="tagInput" placeholder="e.g., PRO, HEDGE" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="submitPosition" class="btn btn-success">Add Position</button>
+                <button id="closeModal" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Option Chain Modal -->
+    <div id="optionChainModal" class="modal hidden">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Live Option Chain</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chain-controls">
+                    <label>Strike Count:</label>
+                    <select id="strikeCountSelect">
+                        <option value="30">30 Strikes</option>
+                        <option value="50" selected>50 Strikes</option>
+                        <option value="80">80 Strikes</option>
+                        <option value="100">100 Strikes</option>
+                    </select>
+                </div>
+                <div id="optionChainLoader" class="loader">Loading option chain...</div>
+                <table id="chainTable" class="chain-table hidden">
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="text-align:center;">CALL</th>
+                            <th>STRIKE</th>
+                            <th colspan="4" style="text-align:center;">PUT</th>
+                        </tr>
+                        <tr>
+                            <th>IV%</th>
+                            <th>Price</th>
+                            <th>Delta</th>
+                            <th>+ Add</th>
+                            <th style="text-align:center;">---</th>
+                            <th>IV%</th>
+                            <th>Price</th>
+                            <th>Delta</th>
+                            <th>+ Add</th>
+                        </tr>
+                    </thead>
+                    <tbody id="chainBody">
+                        <!-- Option chain will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Trade History Modal -->
+    <div id="tradeHistoryModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Trade Execution History</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table id="tradeHistoryTable" class="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Action</th>
+                            <th>Qty</th>
+                            <th>Price (₹)</th>
+                            <th>Total (₹)</th>
+                            <th>Tag</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradeHistoryBody">
+                        <!-- Trades will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

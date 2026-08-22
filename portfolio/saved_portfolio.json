@@ -1,0 +1,63 @@
+{
+  "positions": {
+    "NIFTY": [
+      {
+        "id": "16155402",
+        "symbol": "NIFTY",
+        "opt_type": "PE",
+        "strike": 24200.0,
+        "expiry": "25-08-2026",
+        "qty": -2405,
+        "entry_price": 50.83,
+        "current_price": 44.65,
+        "tag": "PRO",
+        "trade_time": "13:30:15",
+        "trades": [
+          {
+            "id": "t-101",
+            "date": "21-08-2026",
+            "time": "13:30:15",
+            "action": "SELL",
+            "qty": -2340,
+            "price": 51.0,
+            "tag": "PRO"
+          },
+          {
+            "id": "t-102",
+            "date": "22-08-2026",
+            "time": "13:40:22",
+            "action": "SELL",
+            "qty": -65,
+            "price": 44.65,
+            "tag": "PRO"
+          }
+        ],
+        "iv": 8.94,
+        "unit_delta": -0.337,
+        "total_delta": 810.48,
+        "unit_gamma": 0.0018,
+        "total_gamma": -4.33,
+        "unit_vega": 8.12,
+        "total_vega": -19528.6,
+        "unit_theta": -9.41,
+        "total_theta": 22631.05,
+        "mtm": 14859.0
+      }
+    ],
+    "BANKNIFTY": [],
+    "FINNIFTY": [],
+    "SILVERM": []
+  },
+  "lot_sizes": {
+    "NIFTY": 75,
+    "BANKNIFTY": 40,
+    "FINNIFTY": 40,
+    "SILVERM": 1
+  },
+  "spot_prices": {
+    "NIFTY": 24252.0,
+    "BANKNIFTY": 57761.95,
+    "FINNIFTY": 26261.0,
+    "SILVERM": 247855.0
+  }
+}

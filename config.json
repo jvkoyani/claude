@@ -1,0 +1,9 @@
+{
+  "app_id": "MG82DQTITG-100",
+  "secret_key": "R6YZK4FJ2X",
+  "redirect_uri": "https://www.google.com/",
+  "access_token": "",
+  "use_mock_feed": true,
+  "host": "127.0.0.1",
+  "port": 8000
+}
