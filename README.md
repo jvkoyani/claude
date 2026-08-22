@@ -2,6 +2,21 @@
 
 A complete, production-ready trading terminal for options volatility hedging, Greeks risk management, and live trading integrated with Fyers API v3.
 
+## 🚀 Deploy for FREE on Replit (2 minutes!)
+
+**No credit card. No configuration. Just click and go.**
+
+1. Go to [replit.com](https://replit.com)
+2. Click "Import from GitHub"
+3. Paste: `https://github.com/jvkoyani/claude`
+4. Select branch: `claude/app-from-markdown-0fpli3`
+5. Click "Run" ▶️
+6. Done! Your app is live ✅
+
+**See [REPLIT_DEPLOYMENT.md](REPLIT_DEPLOYMENT.md) for detailed guide.**
+
+---
+
 ## Features
 
 ### Core Trading Engine
@@ -33,30 +48,48 @@ A complete, production-ready trading terminal for options volatility hedging, Gr
 
 ## Installation
 
-### Prerequisites
-- Windows 10/11 (64-bit)
-- Python 3.10, 3.11, or 3.12
-- Fyers Trading & Demat Account with API v3 credentials
+### Quick Start - Replit (Recommended, FREE) ⭐
 
-### Quick Start (Windows)
+```
+1. Go to replit.com → Sign up with GitHub
+2. Click "Create" → "Import from GitHub"
+3. Paste: https://github.com/jvkoyani/claude
+4. Select branch: claude/app-from-markdown-0fpli3
+5. Click "Import" then "Run"
+✅ Done! Your app is live at: https://your-replit-name.replit.dev
+```
 
-1. **Download** the application folder to your PC
-2. **Double-click** `SETUP_AND_RUN.bat`
-   - Automatically checks Python
-   - Installs all dependencies
-   - Launches the desktop terminal
+**Full guide:** [REPLIT_DEPLOYMENT.md](REPLIT_DEPLOYMENT.md)
 
-### Manual Installation
+---
+
+### Windows Desktop Installation
+
+Prerequisites: Windows 10/11, Python 3.10+
 
 ```bash
+1. Download the folder
+2. Double-click SETUP_AND_RUN.bat
+3. App launches automatically
+```
+
+---
+
+### Manual Installation (Any OS)
+
+```bash
+# Clone repository
+git clone https://github.com/jvkoyani/claude.git
+cd claude
+git checkout claude/app-from-markdown-0fpli3
+
 # Install dependencies
 pip install -r requirements.txt
 
-# Generate Fyers API token
-python generate_token.py
+# Run the server
+python main.py
 
-# Start the server
-python desktop_app.py
+# Visit http://localhost:8000
 ```
 
 ## Configuration

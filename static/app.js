@@ -1,8 +1,8 @@
 // VolHedge Pro - Frontend JavaScript Application
 
-// Configuration - reads from window.__VOLHEDGE_CONFIG__ or uses defaults
-const VOLHEDGE_CONFIG = window.__VOLHEDGE_CONFIG__ || {
-    API_BASE_URL: localStorage.getItem('volhedge_api_url') || 'http://localhost:8000',
+// Configuration - Auto-detect API URL based on current location
+const VOLHEDGE_CONFIG = {
+    API_BASE_URL: window.location.origin,  // Same as frontend (Replit deployment)
     WS_PROTOCOL: window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 };
 
@@ -24,7 +24,6 @@ class VolHedgeApp {
         document.getElementById('addScrip').addEventListener('click', () => this.addScripTab());
         document.getElementById('rebalanceBtn').addEventListener('click', () => this.executeRebalance());
         document.getElementById('authBtn').addEventListener('click', () => this.openAuthDialog());
-        document.getElementById('settingsBtn').addEventListener('click', () => this.openConfigModal());
 
         // Modal controls
         document.querySelector('.modal-close').addEventListener('click', (e) => {
@@ -401,40 +400,6 @@ class VolHedgeApp {
         if (!secretKey) return;
 
         alert('To complete OAuth:\n1. Click OK\n2. Browser will open Fyers login\n3. Authorize the application\n4. Copy the redirect URL\n5. Paste it in the terminal prompt');
-    }
-
-    openConfigModal() {
-        const modal = document.getElementById('configModal');
-        const input = document.getElementById('apiUrlInput');
-        input.value = localStorage.getItem('volhedge_api_url') || '';
-
-        modal.classList.remove('hidden');
-
-        document.getElementById('saveConfigBtn').onclick = () => this.saveConfig();
-        document.getElementById('closeConfigModal').onclick = () => {
-            modal.classList.add('hidden');
-        };
-        modal.querySelector('.modal-close').onclick = () => {
-            modal.classList.add('hidden');
-        };
-    }
-
-    saveConfig() {
-        const input = document.getElementById('apiUrlInput');
-        const url = input.value.trim();
-
-        if (url) {
-            localStorage.setItem('volhedge_api_url', url);
-            this.apiBaseUrl = url;
-            alert('✓ Backend URL saved! Page will reload...');
-        } else {
-            localStorage.removeItem('volhedge_api_url');
-            this.apiBaseUrl = 'http://localhost:8000';
-            alert('✓ Reset to localhost');
-        }
-
-        document.getElementById('configModal').classList.add('hidden');
-        location.reload();
     }
 }
 

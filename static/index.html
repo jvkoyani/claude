@@ -14,7 +14,6 @@
                 <h1 class="logo">⚡ VolHedge Pro</h1>
             </div>
             <div class="header-right">
-                <button id="settingsBtn" class="btn btn-secondary">⚙ Backend Config</button>
                 <button id="authBtn" class="btn btn-primary">⚙ Fyers API Setup</button>
             </div>
         </header>
@@ -221,29 +220,6 @@
                         <!-- Trades will be populated here -->
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Backend Configuration Modal -->
-    <div id="configModal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Backend Configuration</h2>
-                <button class="modal-close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label>Backend API URL</label>
-                    <input type="text" id="apiUrlInput" placeholder="e.g., https://your-railway-app.railway.app" />
-                    <small style="color: #cbd5e1; margin-top: 5px; display: block;">
-                        Leave empty for localhost (http://localhost:8000)
-                    </small>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="saveConfigBtn" class="btn btn-success">Save Configuration</button>
-                <button id="closeConfigModal" class="btn btn-secondary">Cancel</button>
             </div>
         </div>
     </div>

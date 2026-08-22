@@ -60,6 +60,9 @@ async def shutdown_event():
     await feed.disconnect()
 
 
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serve main trading dashboard UI"""
